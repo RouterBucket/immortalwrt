@@ -12,8 +12,8 @@
 	aliases {
 		led-boot = &led_sys;
 		led-failsafe = &led_sys;
-		led-running = &led_power;
-		led-upgrade = &led_power;
+		led-running = &led_sys;
+		led-upgrade = &alarm;
 		label-mac-device = &gmac0;
 	};
 
