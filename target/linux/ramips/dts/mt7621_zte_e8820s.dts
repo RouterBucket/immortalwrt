@@ -25,23 +25,43 @@
 		compatible = "gpio-leds";
 
 		led_power: power {
-			label = "white:power";
+			label = "red:power";
 			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
 		};
 
 		led_sys: sys {
-			label = "white:sys";
+			label = "green:sys";
 			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
 		};
 
 		wlan2g {
-			label = "white:wlan2g";
+			label = "green:wlan2g";
 			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
 		};
 
 		wlan5g {
-			label = "white:wlan5g";
+			label = "green:wlan5g";
 			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
+		};
+
+                usb {
+			label = "green:usb";
+			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
+		};
+
+                wps {
+			label = "green:wps";
+			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
+		};
+
+                alarm {
+			label = "red:alarm";
+			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+		};
+
+                act {
+			label = "green:act";
+			gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
 		};
 	};
 
