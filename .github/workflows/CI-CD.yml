@@ -76,7 +76,7 @@ jobs:
       id: compile
       run: |
         cd immortalwrt
-        if make -j1 V=sc; then
+        if make -j1 >$GITHUB_WORKSPACE/compile.log 2>&1; then
         cp -f immortalwrt/bin/* ${images_dir}
         echo "Compile succeeded"
         else
@@ -101,6 +101,7 @@ jobs:
         cd immortalwrt/bin/targets/*/*
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        cp $GITHUB_WORKSPACE/compile.log ${{ env.FIRMWARE }}/compile.log
         
     - name: Upload the .config configuration file in the github space  
       if: ${{ success() && env.UPLOAD_CONFIG == 'true' }}
@@ -121,7 +122,7 @@ jobs:
       if: ${{ success() && env.UPLOAD_TRANSFERSH == 'true' && !cancelled() }}
       run: |
         curl -fsSL git.io/file-transfer | sh 
-        ./transfer trs --no-progress /opt/images/*.trx 2>&1 | tee log.log 
+        ./transfer trs --no-progress ${{ env.FIRMWARE }}/* 2>&1 | tee log.log 
         echo "::warning file=transfer.sh::$(cat log.log | grep https)"
         echo "download_link=$(cat log.log | grep https)" >> $GITHUB_ENV
         echo "::set-output name=url::$(cat transfersh.log | grep https | cut -f3 -d" ")"
