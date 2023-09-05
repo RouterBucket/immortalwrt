@@ -31,7 +31,7 @@ jobs:
     name: Compile immortalwrt firmware
     runs-on: ubuntu-20.04
     env:
-      images_dir: /workdir/immortalwrt/bin/targets/*/*
+      images_dir: /workdir/immortalwrt/bin
     steps:
     - name: Starting
       uses: actions/checkout@main
@@ -76,8 +76,8 @@ jobs:
       id: compile
       run: |
         cd immortalwrt
-        if make -j1 >$GITHUB_WORKSPACE/compile.log 2>&1; then
-        cp -f immortalwrt/bin/* ${images_dir}
+        if make; then
+        cd ${{ env.images_dir }} && ls -la
         echo "Compile succeeded"
         else
         make clean >/dev/null 2>&1
@@ -98,10 +98,9 @@ jobs:
       id: organize
       if: ${{ env.UPLOAD_FIRMWARE == 'true' && !cancelled() }}
       run: |
-        cd immortalwrt/bin/targets/*/*
+        cd ${{ env.images_dir }}/targets/*/*
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        cp $GITHUB_WORKSPACE/compile.log ${{ env.FIRMWARE }}/compile.log
         
     - name: Upload the .config configuration file in the github space  
       if: ${{ success() && env.UPLOAD_CONFIG == 'true' }}
