@@ -76,16 +76,17 @@ jobs:
       id: compile
       run: |
         cd immortalwrt
+        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV 
         if make; then
         cd ${{ env.images_dir }} && ls -la
+        mv ${{ env.images_dir }}/*.bin ${{ env.images_dir }}/*${{ env.FILE_DATE }}.bin
         echo "Compile succeeded"
         else
         make clean >/dev/null 2>&1
         echo "Compile failed"
         fi
-        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
-        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
-        echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
     - name: Upload the bin folder
       uses: actions/upload-artifact@main
@@ -121,10 +122,10 @@ jobs:
       if: ${{ success() && env.UPLOAD_TRANSFERSH == 'true' && !cancelled() }}
       run: |
         curl -fsSL git.io/file-transfer | sh 
-        ./transfer trs --no-progress ${{ env.FIRMWARE }}/* 2>&1 | tee log.log 
+        ./transfer trs --no-progress ${{ env.FIRMWARE }}/*.bin 2>&1 | tee log.log 
         echo "::warning file=transfer.sh::$(cat log.log | grep https)"
-        echo "download_link=$(cat log.log | grep https)" >> $GITHUB_ENV
-        echo "::set-output name=url::$(cat transfersh.log | grep https | cut -f3 -d" ")"
+        #echo "download_link=$(cat log.log | grep https)" >> $GITHUB_ENV
+        echo "::set-output name=url::$(cat log.log | grep https)"
         
     - name: Create release tags
       id: tag
@@ -132,7 +133,7 @@ jobs:
       run: |
         echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
-        [ $UPLOAD_TRANSFERSH = true ] && echo "🔗 [Transfer.sh](${{ steps.transfersh.outputs.url }})" >> release.txt
+        [ $UPLOAD_TRANSFERSH = true ] && echo "🔗 ${{ steps.transfersh.outputs.url }}" >> release.txt
 
     - name: Upload firmware to release
       uses: softprops/action-gh-release@v1
