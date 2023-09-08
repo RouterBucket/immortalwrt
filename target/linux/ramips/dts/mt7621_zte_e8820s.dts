@@ -13,7 +13,7 @@
 		led-boot = &led_power_amber;
 		led-failsafe = &led_power_amber;
 		led-running = &led_power_green;
-		led-upgrade = &alarm;
+		led-upgrade = &net1;
 		label-mac-device = &gmac0;
 	};
 
@@ -54,14 +54,14 @@
 			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
 		};
 
-                alarm {
-			label = "red:alarm";
-			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-		};
-
-                act {
+                net0 {
 			label = "green:act";
 			gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
+		};
+
+                net1 {
+			label = "red:alarm";
+			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
 		};
 	};
 
