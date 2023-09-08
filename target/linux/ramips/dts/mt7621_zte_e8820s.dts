@@ -10,9 +10,9 @@
 	model = "ZTE E8820S";
 
 	aliases {
-		led-boot = &led_sys;
-		led-failsafe = &led_sys;
-		led-running = &led_power;
+		led-boot = &led_power_amber;
+		led-failsafe = &led_power_amber;
+		led-running = &led_power_green;
 		led-upgrade = &alarm;
 		label-mac-device = &gmac0;
 	};
@@ -24,12 +24,12 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_power: power {
+		led_power_amber: power {
 			label = "red:power";
 			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
 		};
 
-		led_sys: sys {
+		led_power_green: sys {
 			label = "green:sys";
 			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
 		};
@@ -89,14 +89,14 @@
 
 	ubi-concat {
 		compatible = "mtd-concat";
-		devices = <&ubipart0 &ubipart1>;
+		devices = <&ubiconcat0 &ubiconcat1>;
 
 		partitions {
 			compatible = "fixed-partitions";
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			ubi@0 {
+			partition@0 {
 				label = "ubi";
 				reg = <0x0 0x79c0000>;
 			};
@@ -135,8 +135,8 @@
 			reg = <0x140000 0x400000>;
 		};
 
-		ubipart0: partition@540000 {
-			label = "ubipart0";
+		ubiconcat0: partition@540000 {
+			label = "ubiconcat0";
 			reg = <0x540000 0x1c80000>;
 		};
 
@@ -146,8 +146,8 @@
 			read-only;
 		};
 
-		ubipart1: partition@2240000 {
-			label = "ubipart1";
+		ubiconcat1: partition@2240000 {
+			label = "ubiconcat1";
 			reg = <0x2240000 0x5d40000>;
 		};
 	};
