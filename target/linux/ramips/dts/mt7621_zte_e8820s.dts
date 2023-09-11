@@ -8,20 +8,55 @@
 	model = "ZTE E8820S";
 
 	aliases {
-		led-boot = &led_sys;
-		led-failsafe = &led_sys;
-		led-running = &led_sys;
-		led-upgrade = &led_sys;
+		led-boot = &led_power_amber;
+		led-failsafe = &led_power_amber;
+		led-running = &led_power_green;
+		led-upgrade = &led_power_amber; /* to be changed to: &net1 */
 	};
 
 	leds {
 		compatible = "gpio-leds";
 
-		led_sys: sys {
-			label = "white:sys";
+		led_power_amber: power {
+			label = "red:power";
 			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
 		};
 
+		led_power_green: sys {
+			label = "green:sys";
+			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
+		};
+
+		wlan2g {
+			label = "green:wlan2g";
+			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
+		};
+
+		wlan5g {
+			label = "green:wlan5g";
+			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
+		};
+		/* To be tested
+        *usb {
+		*	label = "green:usb";
+		*	gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
+		*};
+		*
+        *wps {
+		*	label = "green:wps";
+		*	gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
+		*};
+		*
+        *net0 {
+		*	label = "green:act";
+		*	gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
+		*};
+		*
+        *net1 {
+		*	label = "red:alarm";
+		*	gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+		*};
+		*/
 	};
 
 	keys {
@@ -29,7 +64,7 @@
 
 		reset {
 			label = "reset";
-			gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio 18 GPIO_ACTIVE_HIGH>;
 			linux,code = <KEY_RESTART>;
 		};
 

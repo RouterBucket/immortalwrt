@@ -103,6 +103,7 @@ platform_do_upgrade() {
 	netgear,wac124|\
 	netgear,wax202|\
 	netis,wf2881|\
+	nokia-sbell,a040wq|\
 	raisecom,msg1500-x-00|\
 	rostelecom,rt-sf-1|\
 	sercomm,na502|\
@@ -118,6 +119,7 @@ platform_do_upgrade() {
 	xiaomi,mi-router-cr6608|\
 	xiaomi,mi-router-cr6609|\
 	xiaomi,redmi-router-ac2100|\
+	zte,e8820s|\
 	zyxel,nwa50ax|\
 	zyxel,nwa55axe)
 		nand_do_upgrade "$1"
