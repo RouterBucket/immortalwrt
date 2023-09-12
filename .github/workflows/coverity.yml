@@ -2,8 +2,8 @@ name: Coverity scan build
 
 on:
   workflow_dispatch:
-  #schedule:
-   # - cron: '30 2 * * 6'
+  schedule:
+    - cron: '30 2 * * 6'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,4 +17,4 @@ jobs:
       contents: read
       packages: read
       actions: write
-    uses: openwrt/actions-shared-workflows/.github/workflows/coverity.yml@main
+    uses: RouterBucket/actions-shared-workflows/.github/workflows/coverity.yml@main
