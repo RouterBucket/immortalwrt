@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
 #include "mt7621.dtsi"
 
 #include <dt-bindings/gpio/gpio.h>
@@ -11,7 +13,12 @@
 		led-boot = &led_power_amber;
 		led-failsafe = &led_power_amber;
 		led-running = &led_power_green;
-		led-upgrade = &led_power_amber; /* to be changed to: &net1 */
+		led-upgrade = &net1;
+		label-mac-device = &gmac0;
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200";
 	};
 
 	leds {
@@ -36,27 +43,29 @@
 			label = "green:wlan5g";
 			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
 		};
-		/* To be tested
-        *usb {
-		*	label = "green:usb";
-		*	gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-		*};
-		*
-        *wps {
-		*	label = "green:wps";
-		*	gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
-		*};
-		*
-        *net0 {
-		*	label = "green:act";
-		*	gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
-		*};
-		*
-        *net1 {
-		*	label = "red:alarm";
-		*	gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-		*};
-		*/
+
+		/* In testing */
+        usb {
+			label = "green:usb";
+			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+		};
+		
+        wps {
+			label = "green:wps";
+			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
+		};
+		
+        net0 {
+			label = "green:act";
+			gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
+		};
+		
+        net1 {
+			label = "red:alarm";
+			gpios = <&gpio 6 GPIO_ACTIVE_LOW>;
+		};
+		/* In testing */
+
 	};
 
 	keys {
@@ -102,6 +111,19 @@
 			read-only;
 		};
 
+		/* uboot expects to find kernels at 0x100000 & 0x140000
+		* referred to as system 1 & system 2 respectively.
+		* a kernel is considered suitable for handing control over
+		* if its linux magic number exists & uImage CRC are correct.
+		* If either of those conditions fail, a matching sys'n'_fail flag
+		* is set in uboot env & a restart performed in the hope that the
+		* alternate kernel is okay.
+		* if neither kernel checksums ok and both are marked failed, system 2
+		* is booted anyway.
+		*
+		* Note uboot's tftp flash install writes the transferred
+		* image to both kernel partitions.
+		*/
 		factory: partition@100000 {
 			label = "factory";
 			reg = <0x100000 0x40000>;
@@ -113,6 +135,13 @@
 			reg = <0x140000 0x400000>;
 		};
 
+		/* ubi partition is the result of squashing
+		 * next consecutive stock partitions:
+		 * - ubiconcat1 (rootfs partition for stock kernel0),
+		 * - ubiconcat0 (rootfs partition for stock failsafe kernel1),
+		 * - overlay (used as ubi overlay in stock fw)
+		 * resulting 117,5MiB space for packages.
+		 */
 		partition@540000 {
 			label = "ubi";
 			reg = <0x540000 0x7A00000>;
