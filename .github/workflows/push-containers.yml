@@ -8,8 +8,8 @@ on:
       - 'tools/**'
       - '.github/workflows/push-containers.yml'
       - 'toolchain/**'
-    #branches-ignore:
-     # - master
+    branches-ignore:
+      - master
 
 permissions:
   contents: read
