@@ -1,14 +1,15 @@
 name: Build and Push prebuilt tools container
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'include/version.mk'
       - 'tools/**'
       - '.github/workflows/push-containers.yml'
       - 'toolchain/**'
-    branches-ignore:
-      - master
+    #branches-ignore:
+     # - master
 
 permissions:
   contents: read
