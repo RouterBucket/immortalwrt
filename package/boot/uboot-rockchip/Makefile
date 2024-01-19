@@ -5,9 +5,9 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_VERSION:=2023.10-rc3
+PKG_VERSION:=2024.01
 PKG_RELEASE:=1
-PKG_HASH:=4c29d64e764060b49e7658f0cf9f86911d0b2bc081f13980a19b99cc89584ba0
+PKG_HASH:=b99611f1ed237bf3541bdc8434b68c96a6e05967061f992443cb30aabebef5b3
 
 PKG_MAINTAINER:=Tobias Maedel <openwrt@tbspace.de>
 
@@ -115,7 +115,8 @@ define U-Boot/nanopi-r4s-rk3399
   $(U-Boot/Default/rk3399)
   NAME:=NanoPi R4S
   BUILD_DEVICES:= \
-    friendlyarm_nanopi-r4s
+    friendlyarm_nanopi-r4s \
+    friendlyarm_nanopi-r4s-enterprise
 endef
 
 define U-Boot/nanopi-r4se-rk3399
@@ -123,13 +124,6 @@ define U-Boot/nanopi-r4se-rk3399
   NAME:=NanoPi R4SE
   BUILD_DEVICES:= \
     friendlyarm_nanopi-r4se
-endef
-
-define U-Boot/nanopi-r4s-enterprise-rk3399
-  $(U-Boot/Default/rk3399)
-  NAME:=NanoPi R4S Enterprise Edition
-  BUILD_DEVICES:= \
-    friendlyarm_nanopi-r4s-enterprise
 endef
 
 define U-Boot/rock-pi-4-rk3399
@@ -191,27 +185,6 @@ define U-Boot/nanopi-r5s-rk3568
     friendlyarm_nanopi-r5s
 endef
 
-define U-Boot/opc-h66k-rk3568
-  $(U-Boot/Default/rk3568)
-  NAME:=OPC-H66K
-  BUILD_DEVICES:= \
-    hinlink_opc-h66k
-endef
-
-define U-Boot/opc-h68k-rk3568
-  $(U-Boot/Default/rk3568)
-  NAME:=OPC-H68K
-  BUILD_DEVICES:= \
-    hinlink_opc-h68k
-endef
-
-define U-Boot/opc-h69k-rk3568
-  $(U-Boot/Default/rk3568)
-  NAME:=OPC-H69K
-  BUILD_DEVICES:= \
-    hinlink_opc-h69k
-endef
-
 define U-Boot/roc-pc-rk3568
   $(U-Boot/Default/rk3568)
   NAME:=Station P2
@@ -271,7 +244,6 @@ UBOOT_TARGETS := \
   nanopc-t4-rk3399 \
   nanopi-r4s-rk3399 \
   nanopi-r4se-rk3399 \
-  nanopi-r4s-enterprise-rk3399 \
   rock-pi-4-rk3399 \
   rockpro64-rk3399 \
   nanopi-r2c-rk3328 \
@@ -287,9 +259,6 @@ UBOOT_TARGETS := \
   mrkaio-m68s-rk3568 \
   nanopi-r5c-rk3568 \
   nanopi-r5s-rk3568 \
-  opc-h66k-rk3568 \
-  opc-h68k-rk3568 \
-  opc-h69k-rk3568 \
   roc-pc-rk3568 \
   nanopc-t6-rk3588 \
   rock5b-rk3588 \

@@ -63,6 +63,7 @@ platform_do_upgrade() {
 	beeline,smartbox-turbo|\
 	beeline,smartbox-turbo-plus|\
 	belkin,rt1800|\
+	dlink,covr-x1860-a1|\
 	dlink,dap-x1860-a1|\
 	dlink,dir-1960-a1|\
 	dlink,dir-2640-a1|\
@@ -104,6 +105,7 @@ platform_do_upgrade() {
 	netgear,wax202|\
 	netis,wf2881|\
 	raisecom,msg1500-x-00|\
+	rostelecom,rt-fe-1a|\
 	rostelecom,rt-sf-1|\
 	sercomm,na502|\
 	sercomm,na502s|\
@@ -118,6 +120,7 @@ platform_do_upgrade() {
 	xiaomi,mi-router-cr6608|\
 	xiaomi,mi-router-cr6609|\
 	xiaomi,redmi-router-ac2100|\
+	zte,e8820s|\
 	zyxel,nwa50ax|\
 	zyxel,nwa55axe)
 		nand_do_upgrade "$1"
@@ -150,6 +153,7 @@ platform_do_upgrade() {
 		platform_upgrade_ubnt_erx "$1"
 		;;
 	zyxel,lte3301-plus|\
+	zyxel,lte5398-m904|\
 	zyxel,nr7101)
 		fw_setenv CheckBypass 0
 		fw_setenv Image1Stable 0

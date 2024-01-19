@@ -1,11 +1,12 @@
 let libubus = require("ubus");
 import { open, readfile } from "fs";
-import { wdev_create, wdev_remove, is_equal, vlist_new } from "common";
+import { wdev_create, wdev_set_mesh_params, wdev_remove, is_equal, wdev_set_up, vlist_new, phy_open } from "common";
 
 let ubus = libubus.connect();
 
 wpas.data.config = {};
 wpas.data.iface_phy = {};
+wpas.data.macaddr_list = {};
 
 function iface_stop(iface)
 {
@@ -20,18 +21,26 @@ function iface_stop(iface)
 	iface.running = false;
 }
 
-function iface_start(phy, iface)
+function iface_start(phydev, iface, macaddr_list)
 {
+	let phy = phydev.name;
+
 	if (iface.running)
 		return;
 
 	let ifname = iface.config.iface;
+	let wdev_config = {};
+	for (let field in iface.config)
+		wdev_config[field] = iface.config[field];
+	if (!wdev_config.macaddr)
+		wdev_config.macaddr = phydev.macaddr_next();
 
 	wpas.data.iface_phy[ifname] = phy;
 	wdev_remove(ifname);
-	let ret = wdev_create(phy, ifname, iface.config);
+	let ret = wdev_create(phy, ifname, wdev_config);
 	if (ret)
 		wpas.printf(`Failed to create device ${ifname}: ${ret}`);
+	wdev_set_up(ifname, true);
 	wpas.add_iface(iface.config);
 	iface.running = true;
 }
@@ -78,9 +87,22 @@ function set_config(phy_name, config_list)
 function start_pending(phy_name)
 {
 	let phy = wpas.data.config[phy_name];
+	let ubus = wpas.data.ubus;
+
+	if (!phy || !phy.data)
+		return;
+
+	let phydev = phy_open(phy_name);
+	if (!phydev) {
+		wpas.printf(`Could not open phy ${phy_name}`);
+		return;
+	}
+
+	let macaddr_list = wpas.data.macaddr_list[phy_name];
+	phydev.macaddr_init(macaddr_list);
 
 	for (let ifname in phy.data)
-		iface_start(phy_name, phy.data[ifname]);
+		iface_start(phydev, phy.data[ifname]);
 }
 
 let main_obj = {
@@ -108,6 +130,20 @@ let main_obj = {
 				wpas.printf(`Error chaging state: ${e}\n${e.stacktrace[0].context}`);
 				return libubus.STATUS_INVALID_ARGUMENT;
 			}
+			return 0;
+		}
+	},
+	phy_set_macaddr_list: {
+		args: {
+			phy: "",
+			macaddr: [],
+		},
+		call: function(req) {
+			let phy = req.args.phy;
+			if (!phy)
+				return libubus.STATUS_INVALID_ARGUMENT;
+
+			wpas.data.macaddr_list[phy] = req.args.macaddr;
 			return 0;
 		}
 	},
@@ -210,6 +246,7 @@ let main_obj = {
 
 wpas.data.ubus = ubus;
 wpas.data.obj = ubus.publish("wpa_supplicant", main_obj);
+wpas.udebug_set("wpa_supplicant", wpas.data.ubus);
 
 function iface_event(type, name, data) {
 	let ubus = wpas.data.ubus;
@@ -281,6 +318,23 @@ return {
 		}
 
 		iface_hostapd_notify(phy, ifname, iface, state);
+
+		if (state != "COMPLETED")
+			return;
+
+		let phy_data = wpas.data.config[phy];
+		if (!phy_data)
+			return;
+
+		let iface_data = phy_data.data[ifname];
+		if (!iface_data)
+			return;
+
+		let wdev_config = iface_data.config;
+		if (!wdev_config || wdev_config.mode != "mesh")
+			return;
+
+		wdev_set_mesh_params(ifname, wdev_config);
 	},
 	event: function(ifname, iface, ev, info) {
 		let phy = wpas.data.iface_phy[ifname];

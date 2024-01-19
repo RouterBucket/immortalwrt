@@ -67,13 +67,14 @@
 	wifi@0,0 {
 		compatible = "mediatek,mt76";
 		reg = <0x0000 0 0 0 0>;
-		mediatek,mtd-eeprom = <&factory 0x0>;
+		nvmem-cells = <&eeprom_factory_0>;
+		nvmem-cell-names = "eeprom";
 		mediatek,disable-radar-background;
 	};
 };
 
 &gmac0 {
-	nvmem-cells = <&macaddr_factory_3fff4>;
+	nvmem-cells = <&macaddr_factory_3fff4 0>;
 	nvmem-cell-names = "mac-address";
 };
 
@@ -82,7 +83,7 @@
 	label = "wan";
 	phy-handle = <&ethphy0>;
 
-	nvmem-cells = <&macaddr_factory_3fffa>;
+	nvmem-cells = <&macaddr_factory_3fffa 0>;
 	nvmem-cell-names = "mac-address";
 };
 
